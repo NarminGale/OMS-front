@@ -16,10 +16,11 @@ function Categories() {
   const [category, setCategory] = useState({
     name: '',
   })
-  const [editCategory, setEditCategory] = useState({
-    name: '',
-  })
+  // const [editCategory, setEditCategory] = useState({
+  //   name: '',
+  // })
   const [list, setList] = useState([])
+  const [selectedInput, setSelectedInput] = useState([])
   const [isEditing, setIsEditing] = useState(false)
   const [editId, setEditId] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
@@ -29,8 +30,6 @@ function Categories() {
   const onInputChange = (e) => {
     setCategory({ ...category, [e.target.name]: e.target.value })
   }
-
-  console.log(editCategory)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -71,8 +70,6 @@ function Categories() {
         if (res.data.categories) {
           console.log(res.data.categories)
           setList(res.data.categories)
-        } else {
-          setList([])
         }
       })
       .catch((err) => console.log(err))
@@ -83,8 +80,6 @@ function Categories() {
   }, [tokenUsers, navigate])
 
   const removeItem = (id) => {
-    // setList(list.filter((item) => item.id !== id))
-    console.log(id)
     axios
       .delete(`${process.env.REACT_APP_API_URL}api/categories/${id}`, {
         headers: {
@@ -102,8 +97,37 @@ function Categories() {
     setIsEditing(true)
     setEditId(id)
     setCategory(specificItem.name)
-    console.log(id)
-    console.log(specificItem)
+  }
+
+  let changeValue = (e, itemID) => {
+    let selectedInput = list.find((item) => item.id === itemID)
+
+    selectedInput.name = e.target.value
+
+    const remindArray = list.filter((x) => x.id !== itemID)
+    setList([...remindArray, selectedInput])
+    setSelectedInput(selectedInput)
+    console.log(selectedInput)
+  }
+
+  const editRow = async () => {
+    await axios
+      .put(
+        `${process.env.REACT_APP_API_URL}api/categories/${selectedInput.id}`,
+        selectedInput,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer 46|s2qMomccCBR0uO1dw6v1W9qSwtIFd6xaTXxh3FTe',
+          },
+        }
+      )
+      .then((res) => {
+        getCategories()
+        setIsEditing(false)
+        setEditId(null)
+      })
+      .catch((err) => console.log(err))
   }
 
   return (
@@ -220,9 +244,7 @@ function Categories() {
                       {editId === item.id ? (
                         <input
                           value={item.name}
-                          onChange={(e) =>
-                            setEditCategory({ name: e.target.value })
-                          }
+                          onChange={(e) => changeValue(e, item.id)}
                         />
                       ) : (
                         <span>{item.name}</span>
@@ -233,7 +255,7 @@ function Categories() {
                         data-bs-toggle="modal"
                         onClick={() => editItem(item.id)}>
                         {editId === item.id ? (
-                          <img src={iconSave} alt="icon" />
+                          <img onClick={editRow} src={iconSave} alt="icon" />
                         ) : (
                           <img src={iconEdit} alt="icon" />
                         )}
