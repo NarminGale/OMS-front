@@ -7,10 +7,12 @@ import { FaPlus } from 'react-icons/fa'
 
 function Types() {
   const [types, setTypes] = useState('')
+  const [selectValue, setSelectValue] = useState('')
   const [list, setList] = useState([])
   const [isEditing, setIsEditing] = useState(false)
   const [editId, setEditId] = useState(null)
 
+  console.log(selectValue)
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!types) {
@@ -32,10 +34,12 @@ function Types() {
       // show alert
       const newTypes = {
         id: new Date().getTime().toString(),
-        title: types,
+        category: selectValue,
+        type: types,
       }
       list.push(newTypes)
       setTypes('')
+      setSelectValue('')
       console.log(list)
     }
   }
@@ -48,7 +52,7 @@ function Types() {
     const specificItem = list.find((item) => item.id === id)
     setIsEditing(true)
     setEditId(id)
-    setTypes(specificItem.title)
+    setTypes(specificItem.type)
     console.log(specificItem)
   }
 
@@ -69,14 +73,13 @@ function Types() {
                   color="white"
                   style={{
                     height: '20px',
-                    width: '20px',
-                    padding: '4px',
+                    width: '14px',
+                    marginRight: '14',
                   }}
                 />
               </span>
               Add
             </button>
-
             <div
               className="modal fade"
               id="exampleModal"
@@ -87,7 +90,7 @@ function Types() {
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLabel">
-                      Add Category
+                      Add Type
                     </h5>
                     <button
                       type="button"
@@ -105,30 +108,20 @@ function Types() {
                           className="col-form-label">
                           Category name
                         </label>
-                        <div className="dropdown">
-                          <button
-                            className="btn dropdown-toggle w-100  text-left align-left"
-                            type="button"
-                            id="dropdownMenuButton"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false">
-                            Dropdown button
-                          </button>
-                          <div
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownMenuButton">
-                            <a className="dropdown-item" href="#">
-                              Action
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Another action
-                            </a>
-                            <a className="dropdown-item" href="#">
-                              Something else here
-                            </a>
-                          </div>
-                        </div>
+                        <select
+                          className="form-select"
+                          aria-label="Default select example"
+                          value={selectValue}
+                          onChange={(e) => setSelectValue(e.target.value)}>
+                          <option defaultValue="Choose a category">
+                            Choose a category
+                          </option>
+                          <option value="Maintain">Maintain</option>
+                          <option value="Repair">Repair</option>
+                          <option value="Office Services">
+                            Office Services
+                          </option>
+                        </select>
                       </div>
                       <div className="mb-3">
                         <label
@@ -154,12 +147,15 @@ function Types() {
                           </div>
                         </div>
                       </div>
-                      <button type="submit" className="btn btn-success mr-2">
+                      <button
+                        type="submit"
+                        className="btn btn-success mr-2"
+                        data-bs-dismiss="modal">
                         Save
                       </button>
                       <button
                         type="button"
-                        className="btn btn-light"
+                        className="btn btn-light mx-3"
                         data-bs-dismiss="modal">
                         Cancel
                       </button>
@@ -192,15 +188,19 @@ function Types() {
                 return (
                   <tr key={index}>
                     <th scope="row">{item.id}</th>
-                    <td>{item.title}</td>
-                    <td>{item.title}</td>
+                    <td>{item.type}</td>
+                    <td>{item.category}</td>
                     <td>
-                      <button onClick={() => editItem(item.id)}>
-                        <img src={iconEdit} alt="icon" />
-                      </button>
-                      <button onClick={() => removeItem(item.id)}>
-                        <img src={iconDelete} alt="icon" />
-                      </button>
+                      <div className="d-inline-block">
+                        <button onClick={() => editItem(item.id)}>
+                          <img src={iconEdit} alt="icon" />
+                        </button>
+                      </div>
+                      <div className="d-inline-block">
+                        <button onClick={() => removeItem(item.id)}>
+                          <img src={iconDelete} alt="icon" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )

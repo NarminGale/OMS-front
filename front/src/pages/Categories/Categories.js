@@ -16,9 +16,6 @@ function Categories() {
   const [category, setCategory] = useState({
     name: '',
   })
-  // const [editCategory, setEditCategory] = useState({
-  //   name: '',
-  // })
   const [list, setList] = useState([])
   const [selectedInput, setSelectedInput] = useState([])
   const [isEditing, setIsEditing] = useState(false)
@@ -123,11 +120,17 @@ function Categories() {
         }
       )
       .then((res) => {
-        getCategories()
         setIsEditing(false)
         setEditId(null)
+        getCategories()
       })
       .catch((err) => console.log(err))
+  }
+
+  const cancelEdit = () => {
+    console.log('firfirh')
+    setIsEditing(false)
+    setEditId(null)
   }
 
   return (
@@ -236,7 +239,6 @@ function Categories() {
             <tbody>
               {list.map((item, index) => {
                 manualID++
-
                 return (
                   <tr key={index}>
                     <th scope="row">{manualID}</th>
@@ -251,25 +253,43 @@ function Categories() {
                       )}
                     </td>
                     <td>
-                      <button
-                        data-bs-toggle="modal"
-                        onClick={() => editItem(item.id)}>
+                      <div className="d-inline-block">
                         {editId === item.id ? (
-                          <img onClick={editRow} src={iconSave} alt="icon" />
+                          <button data-bs-toggle="modal">
+                            <img onClick={editRow} src={iconSave} alt="icon" />
+                          </button>
                         ) : (
-                          <img src={iconEdit} alt="icon" />
+                          <button data-bs-toggle="modal">
+                            <img
+                              src={iconEdit}
+                              alt="icon"
+                              onClick={() => editItem(item.id)}
+                            />
+                          </button>
                         )}
-                      </button>
-                      <button
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModal1"
-                        onClick={() => setDeleteId(item.id)}>
+                      </div>
+
+                      <div className="d-inline-block">
                         {editId === item.id ? (
-                          <img src={iconCancel} alt="icon" />
+                          <button data-bs-toggle="modal">
+                            <img
+                              src={iconCancel}
+                              alt="icon"
+                              onClick={() => cancelEdit(editId)}
+                            />
+                          </button>
                         ) : (
-                          <img src={iconDelete} alt="icon" />
+                          <button
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal1">
+                            <img
+                              src={iconDelete}
+                              alt="icon"
+                              onClick={() => setDeleteId(item.id)}
+                            />
+                          </button>
                         )}
-                      </button>
+                      </div>
                       <div
                         className="modal fade"
                         id="exampleModal1"

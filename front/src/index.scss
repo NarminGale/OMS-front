@@ -208,7 +208,7 @@ body {
 
 // categories page sass file
 .categories {
-  margin-left: 260px; /* Same as the width of the sidenav */
+  margin-left: 260px;
   padding-top: 60px;
   h1 {
     font-size: 32px;
@@ -259,7 +259,7 @@ body {
       border-top: transparent;
     }
 
-    table.table-bordered > tbody > tr > td > button {
+    table.table-bordered > tbody > tr > td > div > button {
       outline: none;
       border: none;
       background-color: transparent;
