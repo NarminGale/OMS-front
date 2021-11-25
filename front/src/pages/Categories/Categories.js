@@ -18,7 +18,6 @@ function Categories() {
   })
   const [list, setList] = useState([])
   const [selectedInput, setSelectedInput] = useState([])
-  const [isEditing, setIsEditing] = useState(false)
   const [editId, setEditId] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
 
@@ -91,7 +90,6 @@ function Categories() {
 
   const editItem = (id) => {
     const specificItem = list.find((item) => item.id === id)
-    setIsEditing(true)
     setEditId(id)
     setCategory(specificItem.name)
   }
@@ -120,7 +118,6 @@ function Categories() {
         }
       )
       .then((res) => {
-        setIsEditing(false)
         setEditId(null)
         getCategories()
       })
@@ -129,7 +126,6 @@ function Categories() {
 
   const cancelEdit = () => {
     console.log('firfirh')
-    setIsEditing(false)
     setEditId(null)
   }
 

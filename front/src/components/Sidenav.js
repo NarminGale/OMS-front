@@ -25,23 +25,26 @@ function Sidenav() {
           <img src={logo} className="logo" alt="icon" />
         </div>
         <div className="sidenav_links">
-          <Link to="/dashboard">
-            <div className="link">
+          <div>
+            <Link to="/dashboard" className="link">
               <img src={homepage} alt="icon" />
               <span>Homepage</span>
               <img src={arrowIcon} className="arrow-icon" alt="icon" />
-            </div>
-          </Link>
+            </Link>
+          </div>
 
-          <Link to="/orders">
-            <div className="link">
+          <div>
+            <Link to="/orders" className="link">
               <img src={orders} alt="icon" />
               <span>Orders</span>
               <img src={arrowIcon} className="arrow-icon" alt="icon" />
-            </div>
-          </Link>
+            </Link>
+          </div>
 
-          <Link to="#" onMouseOver={onMouseEnter} onMouseLeave={onMouseLeave}>
+          <div
+            className="dropdown-settings"
+            onMouseOver={onMouseEnter}
+            onMouseLeave={onMouseLeave}>
             <div className="link">
               <img src={settings} alt="icon" />
               <span>Settings</span>
@@ -61,7 +64,7 @@ function Sidenav() {
                 </Link>
               </li>
             </ul>
-          </Link>
+          </div>
         </div>
       </nav>
     </div>
