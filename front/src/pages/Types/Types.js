@@ -1,48 +1,76 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Sidenav from '../../components/Sidenav'
 import iconEdit from '../../images/icon-edit.svg'
 import iconDelete from '../../images/icon-delete.svg'
 import iconClose from '../../images/icon-close.svg'
 import { FaPlus } from 'react-icons/fa'
+import axios from 'axios'
 
 function Types() {
-  const [types, setTypes] = useState('')
-  const [selectValue, setSelectValue] = useState('')
+  const [type, setType] = useState('')
+  const [category, setCategory] = useState('')
   const [list, setList] = useState([])
-  const [isEditing, setIsEditing] = useState(false)
   const [editId, setEditId] = useState(null)
+  const [categories, setCategories] = useState([])
 
-  console.log(selectValue)
-  const handleSubmit = (e) => {
+  let manualID = 0
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!types) {
-      // display alert
-    } else if (types && isEditing) {
-      // editing
-      setList(
-        list.map((item) => {
-          if (item.id === editId) {
-            return { ...item, title: types }
-          }
-          return item
-        })
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_API_URL}api/types`,
+        {
+          category_id: category,
+          name: type,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer 46|s2qMomccCBR0uO1dw6v1W9qSwtIFd6xaTXxh3FTe',
+          },
+        }
       )
-      setTypes('')
-      setEditId(null)
-      setIsEditing(false)
-    } else {
-      // show alert
-      const newTypes = {
-        id: new Date().getTime().toString(),
-        category: selectValue,
-        type: types,
-      }
-      list.push(newTypes)
-      setTypes('')
-      setSelectValue('')
-      console.log(list)
-    }
+      .then((res) => {
+        console.log(res)
+        setType('')
+        setCategory('')
+        getTypes()
+      })
+      .catch((err) => console.log(err))
   }
+
+  const getTypes = () => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}api/types`, {
+        headers: {
+          Authorization: 'Bearer 46|s2qMomccCBR0uO1dw6v1W9qSwtIFd6xaTXxh3FTe',
+        },
+      })
+      .then((res) => {
+        setList(res.data.types)
+      })
+      .catch((err) => console.log(err))
+  }
+
+  const getCategories = () => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}api/categories`, {
+        headers: {
+          Authorization: 'Bearer 46|s2qMomccCBR0uO1dw6v1W9qSwtIFd6xaTXxh3FTe',
+        },
+      })
+      .then((res) => {
+        setCategories(res.data.categories)
+      })
+      .catch((err) => console.log(err))
+  }
+
+  useEffect(() => {
+    getTypes()
+    getCategories()
+  }, [])
 
   const removeItem = (id) => {
     setList(list.filter((item) => item.id !== id))
@@ -50,10 +78,10 @@ function Types() {
 
   const editItem = (id) => {
     const specificItem = list.find((item) => item.id === id)
-    setIsEditing(true)
-    setEditId(id)
-    setTypes(specificItem.type)
-    console.log(specificItem)
+    // setIsEditing(true)
+    // setEditId(id)
+    // setType(specificItem.type)
+    // console.log(specificItem)
   }
 
   return (
@@ -111,16 +139,18 @@ function Types() {
                         <select
                           className="form-select"
                           aria-label="Default select example"
-                          value={selectValue}
-                          onChange={(e) => setSelectValue(e.target.value)}>
+                          value={category}
+                          onChange={(e) => {
+                            setCategory(e.target.value)
+                          }}>
                           <option defaultValue="Choose a category">
                             Choose a category
                           </option>
-                          <option value="Maintain">Maintain</option>
-                          <option value="Repair">Repair</option>
-                          <option value="Office Services">
-                            Office Services
-                          </option>
+                          {categories.map((category, index) => (
+                            <option value={category.id} key={index}>
+                              {category.name}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="mb-3">
@@ -137,9 +167,9 @@ function Types() {
                             aria-describedby="inputGroupPrepend"
                             placeholder="Enter"
                             required
-                            value={types}
+                            value={type}
                             onChange={(e) => {
-                              setTypes(e.target.value)
+                              setType(e.target.value)
                             }}
                           />
                           <div className="invalid-feedback">
@@ -185,11 +215,18 @@ function Types() {
             </thead>
             <tbody>
               {list.map((item, index) => {
+                manualID++
                 return (
                   <tr key={index}>
-                    <th scope="row">{item.id}</th>
-                    <td>{item.type}</td>
-                    <td>{item.category}</td>
+                    <th scope="row">{manualID}</th>
+                    <td>{item.name}</td>
+                    <td>
+                      {categories.map((category) => {
+                        if (category.id === item.category_id) {
+                          return category.name
+                        }
+                      })}
+                    </td>
                     <td>
                       <div className="d-inline-block">
                         <button onClick={() => editItem(item.id)}>

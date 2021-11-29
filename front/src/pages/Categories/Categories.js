@@ -96,7 +96,6 @@ function Categories() {
 
   let changeValue = (e, itemID) => {
     let selectedInput = list.find((item) => item.id === itemID)
-
     selectedInput.name = e.target.value
 
     const remindArray = list.filter((x) => x.id !== itemID)
