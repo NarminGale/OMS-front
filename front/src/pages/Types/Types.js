@@ -12,6 +12,7 @@ function Types() {
   const [list, setList] = useState([])
   const [editId, setEditId] = useState(null)
   const [categories, setCategories] = useState([])
+  const [deleteId, setDeleteId] = useState(null)
 
   let manualID = 0
 
@@ -73,7 +74,16 @@ function Types() {
   }, [])
 
   const removeItem = (id) => {
-    setList(list.filter((item) => item.id !== id))
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}api/types/${id}`, {
+        headers: {
+          Authorization: 'Bearer 46|s2qMomccCBR0uO1dw6v1W9qSwtIFd6xaTXxh3FTe',
+        },
+      })
+      .then((res) => {
+        getTypes()
+      })
+      .catch((err) => console.log(err))
   }
 
   const editItem = (id) => {
@@ -234,9 +244,63 @@ function Types() {
                         </button>
                       </div>
                       <div className="d-inline-block">
-                        <button onClick={() => removeItem(item.id)}>
-                          <img src={iconDelete} alt="icon" />
+                        <button
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal1">
+                          <img
+                            src={iconDelete}
+                            alt="icon"
+                            onClick={() => setDeleteId(item.id)}
+                          />
                         </button>
+                      </div>
+                      <div
+                        className="modal fade"
+                        id="exampleModal1"
+                        tabIndex="-1"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div className="modal-dialog modal-dialog-centered">
+                          <div className="modal-content">
+                            <div className="modal-header">
+                              <h5
+                                className="modal-title"
+                                id="exampleModalLabel">
+                                Confirm Deletion
+                              </h5>
+                              <button
+                                type="button"
+                                className="close-button"
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img src={iconClose} alt="icon" />
+                              </button>
+                            </div>
+                            <div className="modal-body">
+                              <form>
+                                <div className="my-3 text-center">
+                                  <p className="fw-bold">Delete this row?</p>
+                                  <span>This action can’t be undone</span>
+                                </div>
+                                <div className="d-flex justify-content-center">
+                                  <button
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                    className="btn btn-danger mx-3"
+                                    onClick={() => removeItem(deleteId)}>
+                                    Delete
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-light mx-3"
+                                    data-bs-dismiss="modal">
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   </tr>
